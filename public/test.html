@@ -1,0 +1,33 @@
+<html>
+<head>
+  <script src="/socket.io.js"></script>
+  <script src="/shake.js"></script>
+
+</head>
+<body style="text-align: center;">
+  <div id="blood" style="font-size: 100px; width: 100%;">
+  </div>
+<script>
+  var socket = io.connect('http://192.168.0.4:3000');
+  socket.on('update_blood', function (data) {
+    document.getElementById('blood').innerHTML="<h1>"+data[0].blood+"</head>"
+    //console.log(data);
+  });
+  
+  var myShakeEvent = new Shake({
+    threshold: 15, // optional shake strength threshold
+    timeout: 1000 // optional, determines the frequency of event generation
+  });
+  
+  myShakeEvent.start();
+  window.addEventListener('shake', shakeEventDidOccur, false);
+
+  function shakeEventDidOccur () {
+    //put your own code here etc.
+    socket.emit('attack', { team: 'white' });
+    alert('shake')
+  }
+</script>
+
+</body>
+</html>

@@ -8,7 +8,8 @@ var session      = require('express-session')
 var partials     = require('express-partials')
 var app = express()
 var Health=require("model/health");
-// var io = require('socket.io')(8080);
+var server = require('http').Server(app)
+var io = require('socket.io')(server)
 
 //config
 mongoose.connect('mongodb://127.0.0.1:27017') //default port
@@ -36,11 +37,26 @@ app.get('/', function (req, res) {
       res.send(result)
       })
 })
+setInterval(function(){
+  Health.find({},function(err,result){
+    io.emit('update_blood', result); 
+  })
+}, 1000);
 
 // shake will minus 1 current blood
 app.post('/shake', function(req,res){
-    Health.update({team: req.body.team},{$inc: {blood: -1}}, function(err,team){
+  Health.update({team: req.body.team},{$inc: {blood: -1}}, function(err,team){
       res.send(team)
     })
 })
-app.listen(port)
+
+
+//socket io event
+io.on('connect',function(socket){
+  socket.on('attack',function(msg){
+    Health.update({team: msg.team},{$inc: {blood: -1}}, function(err,team){
+        console.log(msg)
+      })
+  }) 
+})
+server.listen(port)
