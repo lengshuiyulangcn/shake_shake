@@ -1,33 +1,67 @@
 <html>
-<head>
-  <script src="/socket.io.js"></script>
-  <script src="/shake.js"></script>
+  <head>
+    <title>Shake Attack</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="/socket.io.js"></script>
+    <script src="/shake.js"></script>
+  </head>
+  <body>
+    <div class="container" style="vertical-align: middle;">
+      <div id="title" style="text-align: center;">
+        <h1>Shake PK</h1>
+      </div>
+      <div class="row">
+        <div class="col-md-5">
+          <h1 style="text-align: center;">Red Team</h1>
+          <div class="progress">
+            <div class="progress-bar progress-bar-danger" id= "red_progress" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:10%">
+            </div>
+          </div>
+          <div style="text-align: center"><h2 id="red_blood">100</h2></div>
+        </div>
+        <div class="col-md-2">
+          <center><h1>VS</h1></center>
+        </div>
+        <div class="col-md-5">
+        <h1 style="text-align: center;">White Team</h1>
+          <div class="progress">
+              <div class="progress-bar progress-bar-danger" id="white_progress" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
+              </div>
+           </div>
+          <div style="text-align: center"><h2 id="white_blood">100</h2></div>
+        </div>
+      </div>
+      <div style="text-align: center">
+        <a href="/admin/reset" class="btn btn-primary">Reset</a>
+      </div>
+    </div>
+  <script>
+    var socket = io.connect('http://192.168.0.4:3000');
+    socket.on('update_blood', function (data) {
+      document.getElementById('red_blood').innerHTML=data[0].blood
+      document.getElementById('red_progress').style.width=data[0].blood+"%"
+      document.getElementById('white_blood').innerHTML=data[1].blood
+      document.getElementById('white_progress').style.width=data[1].blood+"%"
+      //console.log(data);
+    });
+    
+    var myShakeEvent = new Shake({
+      threshold: 15, // optional shake strength threshold
+      timeout: 1000 // optional, determines the frequency of event generation
+    });
+    
+    myShakeEvent.start();
+    window.addEventListener('shake', shakeEventDidOccur, false);
 
-</head>
-<body style="text-align: center;">
-  <div id="blood" style="font-size: 100px; width: 100%;">
-  </div>
-<script>
-  var socket = io.connect('http://192.168.0.4:3000');
-  socket.on('update_blood', function (data) {
-    document.getElementById('blood').innerHTML="<h1>"+data[0].blood+"</head>"
-    //console.log(data);
-  });
-  
-  var myShakeEvent = new Shake({
-    threshold: 15, // optional shake strength threshold
-    timeout: 1000 // optional, determines the frequency of event generation
-  });
-  
-  myShakeEvent.start();
-  window.addEventListener('shake', shakeEventDidOccur, false);
+    function shakeEventDidOccur () {
+      //put your own code here etc.
+      socket.emit('attack', { team: 'white' });
+      alert('white team health -1!')
+    }
+  </script>
 
-  function shakeEventDidOccur () {
-    //put your own code here etc.
-    socket.emit('attack', { team: 'white' });
-    alert('shake')
-  }
-</script>
-
-</body>
+  </body>
 </html>
