@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title>Shake Attack</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="/socket.io.js"></script>
+    <script src="/shake.js"></script>
+  </head>
+  <body>
+  <script>
+    var socket = io.connect('http://192.168.0.3:3000');
+    socket.on('update_blood', function (data) {
+      document.getElementById('red_blood').innerHTML=data[0].blood
+      document.getElementById('red_progress').style.width=data[0].blood+"%"
+      document.getElementById('white_blood').innerHTML=data[1].blood
+      document.getElementById('white_progress').style.width=data[1].blood+"%"
+      //console.log(data);
+    });
+    
+    var myShakeEvent = new Shake({
+      threshold: 15, // optional shake strength threshold
+      timeout: 1000 // optional, determines the frequency of event generation
+    });
+    
+    myShakeEvent.start();
+    window.addEventListener('shake', shakeEventDidOccur, false);
+
+    function shakeEventDidOccur () {
+      //put your own code here etc.
+      socket.emit('attack', { team: 'white' });
+      alert('red team health -1!')
+    }
+  </script>
+
+  </body>
+</html>

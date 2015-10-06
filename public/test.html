@@ -12,6 +12,8 @@
     <div class="container" style="vertical-align: middle;">
       <div id="title" style="text-align: center;">
         <h1>Shake PK</h1>
+        <img src='/app-watch.jpg' style="width:300px;height:150px">
+     
       </div>
       <div class="row">
         <div class="col-md-5">
@@ -21,9 +23,17 @@
             </div>
           </div>
           <div style="text-align: center"><h2 id="red_blood">100</h2></div>
+          <div>
+            <ul id="red" style="width: 300px; height: 200px; overflow: auto">
+            </ul>
+          </div>
         </div>
         <div class="col-md-2">
           <center><h1>VS</h1></center>
+          <div style="text-align: center">
+            <a href="/admin/reset" class="btn btn-primary">Reset</a>
+          </div>
+
         </div>
         <div class="col-md-5">
         <h1 style="text-align: center;">White Team</h1>
@@ -32,22 +42,27 @@
               </div>
            </div>
           <div style="text-align: center"><h2 id="white_blood">100</h2></div>
+          <div>
+            <ul id="white" style="width: 300px; height: 200px; overflow: auto"> 
+            </ul>
+          </div>
         </div>
       </div>
-      <div style="text-align: center">
-        <a href="/admin/reset" class="btn btn-primary">Reset</a>
-      </div>
-    </div>
+          </div>
   <script>
-    var socket = io.connect('http://192.168.0.4:3000');
+    var socket = io.connect('http://192.168.0.3:3000');
     socket.on('update_blood', function (data) {
-      document.getElementById('red_blood').innerHTML=data[0].blood
-      document.getElementById('red_progress').style.width=data[0].blood+"%"
-      document.getElementById('white_blood').innerHTML=data[1].blood
-      document.getElementById('white_progress').style.width=data[1].blood+"%"
+      document.getElementById('red_blood').innerHTML=data[1].blood
+      document.getElementById('red_progress').style.width=data[1].blood+"%"
+      document.getElementById('white_blood').innerHTML=data[0].blood
+      document.getElementById('white_progress').style.width=data[0].blood+"%"
       //console.log(data);
     });
-    
+    socket.on('attacker', function (data) {
+      var liveMessage = "<li><span style='color: red;font-size: 20px;'>"+data.attacker+"</span>发动了攻击</li>"
+      $("#"+data.team).prepend(liveMessage)
+    });
+
     var myShakeEvent = new Shake({
       threshold: 15, // optional shake strength threshold
       timeout: 1000 // optional, determines the frequency of event generation
