@@ -52,10 +52,18 @@
   <script>
     var socket = io.connect('http://192.168.0.3:3000');
     socket.on('update_blood', function (data) {
+      if(data[1].blood < 0){
+        location.href = '/white_win.html' 
+      }
+      else if(data[0].blood < 0){
+        location.href = '/red_win.html' 
+      }
+      else{
       document.getElementById('red_blood').innerHTML=data[1].blood
       document.getElementById('red_progress').style.width=data[1].blood+"%"
       document.getElementById('white_blood').innerHTML=data[0].blood
       document.getElementById('white_progress').style.width=data[0].blood+"%"
+       }
       //console.log(data);
     });
     socket.on('attacker', function (data) {
@@ -63,20 +71,7 @@
       $("#"+data.team).prepend(liveMessage)
     });
 
-    var myShakeEvent = new Shake({
-      threshold: 15, // optional shake strength threshold
-      timeout: 1000 // optional, determines the frequency of event generation
-    });
-    
-    myShakeEvent.start();
-    window.addEventListener('shake', shakeEventDidOccur, false);
-
-    function shakeEventDidOccur () {
-      //put your own code here etc.
-      socket.emit('attack', { team: 'white' });
-      alert('white team health -1!')
-    }
-  </script>
+   </script>
 
   </body>
 </html>
