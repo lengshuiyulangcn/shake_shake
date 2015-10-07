@@ -66,7 +66,7 @@ setInterval(function(){
 
 // shake will minus 1 current blood
 app.post('/shake', function(req,res){
-  Health.update({team: req.body.team},{$inc: {blood: -1}}, function(err,team){
+  Health.update({team: req.body.team},{$inc: {blood: -0.1}}, function(err,team){
       res.send(team)
     })
 })
@@ -75,7 +75,7 @@ app.post('/shake', function(req,res){
 //socket io event
 io.on('connect',function(socket){
   socket.on('attack',function(msg){
-    Health.update({team: msg.team},{$inc: {blood: -1}}, function(err,team){
+    Health.update({team: msg.team},{$inc: {blood: -0.1}}, function(err,team){
         console.log(msg)
         io.emit('attacker', {team: msg.myTeam, attacker: msg.userName}); 
       })
