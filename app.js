@@ -10,6 +10,7 @@ var app = express()
 var Health=require("model/health");
 var server = require('http').Server(app)
 var io = require('socket.io')(server)
+var auth = require('basic-auth')
 //config
 mongoose.connect('mongodb://127.0.0.1:27017') //default port
 
@@ -35,6 +36,16 @@ app.get('/admin/reset', function(req,res){
 })
 app.get('/', function (req, res) {
  res.redirect('/index.html')  
+})
+app.get('/show', function (req, res) {
+  var credentials = auth(req)
+    if (!credentials || credentials.name !== 'admin' || credentials.pass !== 'fuckadmintwice') {
+          res.statusCode = 401
+      res.setHeader('WWW-Authenticate', 'Basic realm="example"')
+      res.end('Access denied')
+    } else {
+          res.render('show.ejs')
+    }
 })
 app.post('/number', function (req, res) {
     var number = req.body.number

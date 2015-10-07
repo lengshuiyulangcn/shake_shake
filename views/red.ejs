@@ -8,8 +8,15 @@
     <script src="/socket.io.js"></script>
     <script src="/shake.js"></script>
   </head>
-  <body>
-    <h1>红队战斗员:<%=userName%></h1>
+  <body style="background-color: 242625">
+    <div class='container' style="margin: 20%;20%;50%">
+      <h2><span style='color: white'>红队战斗员:</span><h2><br>
+          <span style="font-size: 30px;color: red"><%=userName%></span>
+    </div>
+    <div class='container'>
+       <img src="/shake-phone.jpg">
+    </div>
+
   <script>
     var socket = io.connect('http://192.168.0.3:3000');
         
