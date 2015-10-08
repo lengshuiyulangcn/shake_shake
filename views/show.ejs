@@ -60,9 +60,9 @@
       }
       else{
       document.getElementById('red_blood').innerHTML=data[1].blood
-      document.getElementById('red_progress').style.width=data[1].blood+"%"
+      document.getElementById('red_progress').style.width=(data[1].blood)/10+"%"
       document.getElementById('white_blood').innerHTML=data[0].blood
-      document.getElementById('white_progress').style.width=data[0].blood+"%"
+      document.getElementById('white_progress').style.width=(data[0].blood)/10+"%"
        }
       //console.log(data);
     });

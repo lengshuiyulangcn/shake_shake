@@ -31,6 +31,7 @@
     function shakeEventDidOccur () {
       //put your own code here etc.
       socket.emit('attack', { team: 'red',myTeam: 'white', userName: "<%=userName%>"});
+      window.navigator.vibrate(200);
     }
   </script>
 

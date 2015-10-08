@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <title>Shake Attack</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="/socket.io.js"></script>
+    <style>
+      .mycircle{
+      width:60px;
+      height:60px;
+      border-radius:50%;
+      font-size:35px;
+      color:#fff;
+      line-height:60px;
+      text-align:center;
+      background:#000;
+      display: inline-block;
+      margin: 5px;
+      }
+    </style>
+<style type="text/css">
+#Result{border:3px solid #40AA53;margin:0 auto;text-align:center;width:400px;padding:50px 0;background:#efe;}
+#ResultNum{font-size:50pt;font-family:Verdana}
+</style>
+  </head>
+    <body>
+      <div clsss="container" style="margin: 20%;20%">
+        <center>
+          <h1>鹿死谁手:</h1>
+        <img src='/app-watch.jpg' style="width:300px;height:150px">
+        </center>
+      <div id="Result" style="color:#40AA53">
+        <span id="ResultNum" style="color: black;">0</span>
+      </div>
+      <br>
+      <center>
+      <button class='btn btn-primary' onclick="rolling()">抽取</button>
+      <button class='btn btn-primary' onclick="goNext()">下一轮</button>
+      </center>
+      <div id="winners">
+      </div>
+  </div>
+<script>
+    var socket = io.connect('http://192.168.0.3:3000');
+    var winners = [<%= numbers %>]
+    socket.on('winners',function(msg){
+      console.log(msg)
+      winners = msg.winners;
+    });
+    var roll = true;
+    var intervalId;
+    function rolling(){
+        var index;
+        if(roll === true){
+         roll = false;
+         intervalId=setInterval(function(){
+           index = Math.floor( Math.random() * winners.length);
+           $('#ResultNum').text(winners[index]);
+         },20);
+        }
+        else{
+         roll = true;
+         window.clearInterval(intervalId);
+           index = Math.floor( Math.random() * winners.length);
+           $('#ResultNum').text(winners[index]);
+           socket.emit('getOne',{number: winners[index]});
+           $("#winners").append("<div class='mycircle'>"+winners[index]+"</div>");
+           winners.splice(index,1);
+        }
+    }
+    function clickRandom(){
+      var index = Math.floor( Math.random() * winners.length); 
+      $("#winners").append("<div class='mycircle'>"+winners[index]+"</div>");
+      socket.emit('getOne',{number: winners[index]});
+      winners.splice(index,1);
+    }    
+
+    function goNext(){
+      $("#winners").empty();
+      socket.emit('nextStage')
+    }
+  </script>
+</body>
+</html>
